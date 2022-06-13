@@ -1,2 +1,4 @@
-# to-do-list
-To Do List in JavaScript
+# To Do List
+
+- Written in JavaScript
+- Using local storage to keep the data
