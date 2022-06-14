@@ -9,8 +9,11 @@ const pageSetup = () => {
 
     let sidebar = divCreate('sidebar');
     let main = divCreate('main');
-    const projects = divCreate('projects');
+    let projects = divCreate('projects');
     let items = divCreate('items');
+
+    projects = addHtmlToNode(projects, 'button', '+');
+    items = addHtmlToNode(items, 'button', '+');
 
     sidebar = addHtmlToNode(sidebar, 'h2', 'Projects');
     sidebar.appendChild(projects);
@@ -39,5 +42,31 @@ const addHtmlToNode = (node, tag, text) => {
 }
 
 
+const createHtmlItem = (item) => {
+    // const myItems = document.querySelector('.items');
 
-export { pageSetup };
+    const myItem = divCreate('item');
+    const myDesc = divCreate('desc');
+    const myDate = divCreate('date');
+    const myDone = divCreate('done');
+
+    myDesc.textContent = item.desc;
+    myDate.textContent = item.date;
+    myDone.textContent = item.done;
+
+
+    myItem.appendChild(myDesc);
+    myItem.appendChild(myDate);
+    myItem.appendChild(myDone);
+
+
+    return myItem;
+}
+
+const renderItem = (item) => {
+    const myItems = document.querySelector('.items');
+    myItems.appendChild(item);
+}
+
+
+export { pageSetup, createHtmlItem, renderItem };
