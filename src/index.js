@@ -1,28 +1,37 @@
-import { pageSetup, renderItem, createHtmlItem, addEventHandlers } from "./dom"; 
+import { pageSetup, renderItem, createHtmlItem, addEventHandlers, renderProjectList } from "./dom"; 
 
-
+var allProjects = [];
 pageSetup();
 addEventHandlers();
 
-function createProject(name, index) {
-    return {
-        name,
-        index,
-        set propName(value) {
-            this.name = value;
-        },
-        get propName() {
-            return this.name;
-        },
-        get propIndex() {
-            return this.index;
-        },
-    }
+
+
+const createProject = (name) => {
+    clearActiveProjects(allProjects);
+    allProjects.push({
+        name, 
+        toDoList: [], 
+        isActive: true,
+    })
 }
 
-var test = createProject('test');
+const clearActiveProjects = (array) => {
+    array.forEach(element => { 
+        element.isActive = false;
+    });
+}
 
-test.propName = 'New';
+// returns index of the active project
+const findActiveProject = (array) => {
+    return array.findIndex((project) => project.isActive === true);
+}
+
+createProject('test');
+createProject('number2');
+
+
+console.log(allProjects[0].name);
+
 
 function createItem(desc, date, done) {
     return {
@@ -37,16 +46,27 @@ function createItem(desc, date, done) {
 
 
 
+
+
 var item1 = createItem('empty bins', '01/01/2021', false);
 var item2 = createItem('laundry', '02/02/2022', true);
 var item3 = createItem('Shoppping', '02/02/2023', false);
 
-var myProject = [item1, item2, item3];
+var itemsArray = [item1, item2, item3];
 
 
-myProject.forEach((arrayItem, index) => renderItem(createHtmlItem(arrayItem, index)));
+itemsArray.forEach((arrayItem, index) => renderItem(createHtmlItem(arrayItem, index)));
 
-export {createProject}
+
+renderProjectList(allProjects);
+console.log(allProjects);
+
+console.log("Index: " + findActiveProject(allProjects));
+
+
+
+
+export {createProject, allProjects, findActiveProject}
 
 // item2.setDesc = 'laundry';
 

@@ -1,4 +1,5 @@
-import  {createProject} from './index';
+import  { createProject } from './index';
+import { allProjects } from './index';
 
 
 const pageSetup = () => {
@@ -15,14 +16,16 @@ const pageSetup = () => {
     let projects = divCreate('projects');
     let items = divCreate('items');
 
-    projects = addHtmlToNode(projects, 'button', '+', 'projectAdd');
-    items = addHtmlToNode(items, 'button', '+', 'itemAdd');
 
     sidebar = addHtmlToNode(sidebar, 'h2', 'Projects');
+    sidebar = addHtmlToNode(sidebar, 'button', '+', 'projectAdd');
+
     sidebar.appendChild(projects);
     container.appendChild(sidebar);
 
     main = addHtmlToNode(main, 'h2', 'Items');
+    main = addHtmlToNode(main, 'button', '+', 'itemAdd');
+
     main.appendChild(items);
     container.appendChild(main);
 
@@ -48,6 +51,18 @@ const addHtmlToNode = (node, tag, text, id) => {
     return node;
 }
 
+const createHtmlProject = (project) => {
+    const a = document.createElement('a');
+    a.textContent = project;
+    return a;
+}
+
+const renderProjectList = (array) => {
+    const projectDiv = document.querySelector('.projects');
+    projectDiv.innerHTML = '';
+    array.forEach(element => { projectDiv.appendChild(createHtmlProject(element.name));
+    });
+}
 
 const createHtmlItem = (item, index) => {
     // const myItems = document.querySelector('.items');
@@ -89,7 +104,8 @@ const renderProjForm = () => {
     // create the project name input
     var projectName = document.createElement('input');
     projectName.setAttribute('type', 'text');
-    projectName.setAttribute('name', 'projectName');
+    projectName.setAttribute('id', 'projectName');
+    projectName.autofocus = true;
     projectName.setAttribute('placeholder', 'Project Name');
 
     // create a cancel button
@@ -119,6 +135,7 @@ const addEventHandlers = () => {
     const addProject = document.querySelector('#projectAdd');
     addProject.addEventListener('click', () => {
         showForm('.projForm');
+        document.querySelector('#projectName').focus();
     });
 
     const addItem = document.querySelector('#itemAdd');
@@ -126,10 +143,27 @@ const addEventHandlers = () => {
         console.log("PRESSED");
     });
 
-    
+
     const projCancelButton = document.querySelector('#projCancelButton');
     projCancelButton.addEventListener('click', () => {
+        document.getElementById('projectName').value = '';
         hideForm('.projForm');
+    });
+
+    const projSubmitButton = document.querySelector('#projSubmitButton');
+        projSubmitButton.addEventListener('click', () => {
+            
+            const newProject = document.getElementById('projectName').value;
+            document.getElementById('projectName').value = '';
+          
+            createProject(newProject);
+
+            hideForm('.projForm');
+
+            renderProjectList(allProjects);
+
+            console.log(allProjects);
+
     });
 }
 
@@ -144,4 +178,4 @@ const hideForm = (name) => {
 }
 
 
-export { pageSetup, createHtmlItem, renderItem, addEventHandlers };
+export { pageSetup, createHtmlItem, renderItem, addEventHandlers, renderProjectList };
