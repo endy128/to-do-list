@@ -150,10 +150,48 @@ button:active {
     height: 100%;
     /* create the full page blur behind the pop up menu */
     background-color: var(--shadow-color);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(1px);
     z-index: 9;
     position: fixed;
     top: 0;
     left: 0;
+}
 
+.itemFormBackground {
+    display: none;
+    width: 100%;
+    height: 100%;
+    /* create the full page blur behind the pop up menu */
+    background-color: var(--shadow-color);
+    backdrop-filter: blur(1px);
+    z-index: 9;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.itemForm {
+    /* changes to block to make visible */
+    display: none; 
+    justify-content: center;
+    gap: 12px;
+    width: 400px;
+    border-radius: 10px;
+    padding: 36px;
+    background-color: white;
+    position: fixed;
+    left: 50%;
+    top: 25%;
+    transform: translate(-50%, 5%);
+
+}
+
+.itemForm form {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns:  1fr 1fr;
+}
+
+.itemForm form input {
+    grid-column-end: span 2;
 }
