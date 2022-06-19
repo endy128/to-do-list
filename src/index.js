@@ -1,7 +1,7 @@
 import { pageSetup, addEventHandlers, renderProjectList, renderItemsList} from "./dom"; 
+import { storageAvailable, saveLocalData } from "./local";
 
-var allProjects = [];
-pageSetup();
+let allProjects = [];
 let activeProject = 0;
 
 
@@ -30,11 +30,20 @@ const setActiveProject = (index) => {
     allProjects[index].isActive = true;
 }
 
-createProject('Default Project');
-createProject('Second List');
 
+const createDefaultToDoList = () => {
+    createProject('Default Project');
+    createProject('Second List');
+    setActiveProject(0);
 
-console.log(allProjects[0].name);
+    allProjects[0].toDoList = [
+        {"desc":"Empty bins","date":"01/01/2021","isDone":false},
+        {"desc":"Do Laundry","date":"02/02/2022","isDone":true},
+        {"desc":"Place Shopping Order","date":"02/02/2023","isDone":false},
+        {"desc":"Clean Car","date":"2022-06-19","isDone":false}
+        ];
+    
+}
 
 
 function createItem(desc, date, isDone) {
@@ -42,51 +51,39 @@ function createItem(desc, date, isDone) {
         desc,
         date,
         isDone,
-        set setDesc (value) {
-            this.desc = value;
         } 
-    }
+    
 }
 
 
 
+if (storageAvailable('localStorage')) {
+    console.log("Local storage IS available")
+    if (!localStorage.allProjects) {
+        console.log("... but nothing there")
+        createDefaultToDoList();
+        } else {
+        console.log("Loading Data");
+        // loadLocalData();
+        allProjects = JSON.parse(localStorage.getItem('allProjects'));
+        }
+    } else {
+    console.log("NO Local storage available")
+};
 
 
-var item1 = createItem('Empty bins', '01/01/2021', false);
-var item2 = createItem('Do Laundry', '02/02/2022', true);
-var item3 = createItem('Place Shopping Order', '02/02/2023', false);
 
-// var itemsArray = [item1, item2, item3];
-allProjects[1].toDoList = [item1, item2, item3];
-
-
-// itemsArray.forEach((arrayItem, index) => renderItem(createHtmlItem(arrayItem, index)));
-
-
-
-
-
+pageSetup();
 renderProjectList(allProjects);
-console.log(allProjects);
 activeProject = findActiveProject(allProjects);
 renderItemsList(activeProject);
-
 addEventHandlers();
 
 
 
 
-// outputs active project INDEX
-console.log("Active Project is Index: " + findActiveProject(allProjects));
 
-// outputs active project NAME
-console.log(allProjects[findActiveProject(allProjects)].name);
-
-
-
-
-
-export {createProject, createItem, allProjects, activeProject, findActiveProject, setActiveProject}
+export { createProject, createItem, allProjects, activeProject, findActiveProject, setActiveProject, saveLocalData}
 
 // item2.setDesc = 'laundry';
 
@@ -98,3 +95,12 @@ export {createProject, createItem, allProjects, activeProject, findActiveProject
 
 // console.log(allProjects[1].toDoList);
 //
+
+// console.log(allProjects[0].name);
+
+
+// outputs active project INDEX
+// console.log("Active Project is Index: " + findActiveProject(allProjects));
+
+// outputs active project NAME
+// console.log(allProjects[findActiveProject(allProjects)].name);

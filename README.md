@@ -6,5 +6,4 @@
 - 
 
 To Do
-- add local storage support for allProjects
 - add delete / edit buttons for projects and items

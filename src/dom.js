@@ -1,4 +1,5 @@
-import  { createProject, createItem, findActiveProject, setActiveProject } from './index';
+import { createProject, createItem, findActiveProject, setActiveProject, activeProject  } from './index';
+import { saveLocalData } from './local'; 
 import { allProjects } from './index';
 import { compareAsc, format } from 'date-fns';
 
@@ -64,19 +65,27 @@ const addHtmlToNode = (node, tag, text, id) => {
     return node;
 }
 
-const createHtmlProject = (project, index) => {
+const createHtmlProject = (project, index, isActive) => {
     const div = document.createElement('div');
     div.textContent = project;
     div.classList.add('project-item');
     div.dataset.index = index;
+    if (isActive === true) div.classList.add('selected');
     return div;
 }
 
 const renderProjectList = (array) => {
     const projectDiv = document.querySelector('.projects');
+    const activeProject = findActiveProject(allProjects);
     projectDiv.innerHTML = '';
-    array.forEach((element, index) => { projectDiv.appendChild(createHtmlProject(element.name, index));
-    });
+    array.forEach((element, index) => { 
+        // if the project is "active" then ensure it is created with the "selected" class
+        if (index === activeProject) {
+            projectDiv.appendChild(createHtmlProject(element.name, index, true));
+        } else {
+            projectDiv.appendChild(createHtmlProject(element.name, index));
+        }
+        });
     addProjectEventHandlers();
 }
 
@@ -237,6 +246,9 @@ const addEventHandlers = () => {
             renderItemsList(findActiveProject(allProjects));
             console.table(allProjects);
 
+            saveLocalData(allProjects);
+
+
     });
 
     const itemCancelButton = document.querySelector('#itemCancelButton');
@@ -263,6 +275,8 @@ const addEventHandlers = () => {
             renderItemsList(findActiveProject(allProjects));
             console.table(allProjects);
 
+            saveLocalData(allProjects);
+
     });
 
     // here
@@ -278,9 +292,10 @@ const addProjectEventHandlers  = (() =>{
                 project.classList.add('selected');
                 setActiveProject(project.dataset.index);
                 renderItemsList(project.dataset.index);
+                saveLocalData(allProjects);
         }));
     }
-    })();
+})();
 
 const removeSelectedProjects = (projects) => {
     projects.forEach(project => project.classList.remove('selected') );
