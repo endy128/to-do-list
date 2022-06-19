@@ -79,6 +79,13 @@ display: grid;
     font-size: 48px;
 }
 
+/* center the "+" symbol */
+#projectAdd span,
+#itemAdd span {
+    position: relative;
+    bottom: 1px;
+}
+
 button:hover {
     background-color: black;
     color: white;
