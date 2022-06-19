@@ -1,7 +1,7 @@
-import  { createProject, createItem, findActiveProject } from './index';
-import { allProjects, activeProject } from './index';
-import { compareAsc, format } from 'date-fns'
-import { it } from 'date-fns/locale';
+import  { createProject, createItem, findActiveProject, setActiveProject } from './index';
+import { allProjects } from './index';
+import { compareAsc, format } from 'date-fns';
+
 
 
 const pageSetup = () => {
@@ -64,17 +64,20 @@ const addHtmlToNode = (node, tag, text, id) => {
     return node;
 }
 
-const createHtmlProject = (project) => {
-    const a = document.createElement('a');
-    a.textContent = project;
-    return a;
+const createHtmlProject = (project, index) => {
+    const div = document.createElement('div');
+    div.textContent = project;
+    div.classList.add('project-item');
+    div.dataset.index = index;
+    return div;
 }
 
 const renderProjectList = (array) => {
     const projectDiv = document.querySelector('.projects');
     projectDiv.innerHTML = '';
-    array.forEach(element => { projectDiv.appendChild(createHtmlProject(element.name));
+    array.forEach((element, index) => { projectDiv.appendChild(createHtmlProject(element.name, index));
     });
+    addProjectEventHandlers();
 }
 
 const createHtmlItem = (item, index) => {
@@ -88,8 +91,9 @@ const createHtmlItem = (item, index) => {
     myItem.dataset.index = index;
 
     myDesc.textContent = item.desc;
-    myDate.textContent = item.date;
-    myDone.textContent = item.done;
+    // myDate.textContent = item.date;
+    myDate.textContent = format(new Date(item.date), 'dd/MM/yyyy')
+    myDone.textContent = item.isDone;
 
 
     myItem.appendChild(myDesc);
@@ -167,6 +171,7 @@ const renderItemForm = () => {
     var itemDate = document.createElement('input');
     itemDate.setAttribute('type', 'date');
     itemDate.setAttribute('id', 'itemDate');
+    itemDate.setAttribute('value', format(new Date(), 'yyyy-MM-dd'));
 
     // // create a hidden input for isDone, set to false
     // var isDone = document.createElement('input');
@@ -207,7 +212,6 @@ const addEventHandlers = () => {
 
     const addItem = document.querySelector('#itemAdd');
     addItem.addEventListener('click', () => {
-        console.log("PRESSED");
         showForm('.itemForm');
         document.querySelector('#itemDesc').focus();
     });
@@ -248,13 +252,11 @@ const addEventHandlers = () => {
             const date = document.getElementById('itemDate').value;
 
             document.getElementById('itemDesc').value = '';
-            document.getElementById('itemDate').value = '';
+            // document.getElementById('itemDate').value = format(new Date(), 'yyyy-MM-dd');
           
             var newItem = createItem(desc, date, false);
-            var activeProject = findActiveProject(allProjects);
 
             addItemToActiveProject(newItem);
-
 
             hideForm('.itemForm');
 
@@ -263,7 +265,26 @@ const addEventHandlers = () => {
 
     });
 
-}
+    // here
+    addProjectEventHandlers();
+    
+};
+
+const addProjectEventHandlers  = (() =>{
+    return () => {
+        const projects = Array.from(document.querySelectorAll('.project-item'));
+            projects.forEach(project => project.addEventListener('click', () => {
+                removeSelectedProjects(projects);
+                project.classList.add('selected');
+                setActiveProject(project.dataset.index);
+                renderItemsList(project.dataset.index);
+        }));
+    }
+    })();
+
+const removeSelectedProjects = (projects) => {
+    projects.forEach(project => project.classList.remove('selected') );
+};
 
 const addItemToActiveProject = (item) => {
     var activeProject = findActiveProject(allProjects);

@@ -1,8 +1,7 @@
-import { pageSetup, renderItem, createHtmlItem, addEventHandlers, renderProjectList, renderItemsList} from "./dom"; 
+import { pageSetup, addEventHandlers, renderProjectList, renderItemsList} from "./dom"; 
 
 var allProjects = [];
 pageSetup();
-addEventHandlers();
 let activeProject = 0;
 
 
@@ -24,6 +23,11 @@ const clearActiveProjects = (array) => {
 // returns index of the active project
 const findActiveProject = (array) => {
     return array.findIndex((project) => project.isActive === true);
+}
+
+const setActiveProject = (index) => {
+    clearActiveProjects(allProjects);
+    allProjects[index].isActive = true;
 }
 
 createProject('Default Project');
@@ -67,6 +71,7 @@ console.log(allProjects);
 activeProject = findActiveProject(allProjects);
 renderItemsList(activeProject);
 
+addEventHandlers();
 
 
 
@@ -81,7 +86,7 @@ console.log(allProjects[findActiveProject(allProjects)].name);
 
 
 
-export {createProject, createItem, allProjects, activeProject, findActiveProject}
+export {createProject, createItem, allProjects, activeProject, findActiveProject, setActiveProject}
 
 // item2.setDesc = 'laundry';
 
