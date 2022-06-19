@@ -1,5 +1,5 @@
-import  { createProject } from './index';
-import { allProjects } from './index';
+import  { createProject, findActiveProject } from './index';
+import { allProjects, activeProject } from './index';
 
 
 const pageSetup = () => {
@@ -16,17 +16,25 @@ const pageSetup = () => {
     let projects = divCreate('projects');
     let items = divCreate('items');
 
-
     sidebar = addHtmlToNode(sidebar, 'h2', 'Projects');
-    sidebar = addHtmlToNode(sidebar, 'button', '+', 'projectAdd');
+
+    let span = document.createElement('span');
+    span.textContent = '+';
+    let button = document.createElement('button');
+    button.id = 'projectAdd';
+    button.appendChild(span);
+    sidebar.appendChild(button);
 
     sidebar.appendChild(projects);
     container.appendChild(sidebar);
 
     main = addHtmlToNode(main, 'h2', 'Items');
-    main = addHtmlToNode(main, 'button', '+', 'itemAdd');
+    let button2 = button.cloneNode(true);
+    button2.id = 'itemAdd';
+    main.appendChild(button2);
 
     main.appendChild(items);
+
     container.appendChild(main);
 
     content.appendChild(container);
@@ -43,6 +51,7 @@ const divCreate = (name) => {
     return div;
 };
 
+// creates a html tag, adds it to a node and if supplied, adds its text content and assigns an ID
 const addHtmlToNode = (node, tag, text, id) => {
     const myTag = document.createElement(tag);
     if (text) { myTag.textContent =  text };
@@ -92,6 +101,12 @@ const renderItem = (item) => {
     myItems.appendChild(item);
 }
 
+const renderItemsList = (activeProject) => {
+    const itemsDiv = document.querySelector('.items');
+    itemsDiv.innerHTML = '';
+    allProjects[activeProject].toDoList.forEach((arrayItem, index) => renderItem(createHtmlItem(arrayItem, index)));
+}
+
 const renderProjForm = () => {
     const formBackground = divCreate('formBackground');
 
@@ -105,8 +120,8 @@ const renderProjForm = () => {
     var projectName = document.createElement('input');
     projectName.setAttribute('type', 'text');
     projectName.setAttribute('id', 'projectName');
-    projectName.autofocus = true;
     projectName.setAttribute('placeholder', 'Project Name');
+    projectName.autofocus = true;
 
     // create a cancel button
     var pCancel = document.createElement('button');
@@ -161,8 +176,8 @@ const addEventHandlers = () => {
             hideForm('.projForm');
 
             renderProjectList(allProjects);
-
-            console.log(allProjects);
+            renderItemsList(findActiveProject(allProjects));
+            console.table(allProjects);
 
     });
 }
@@ -178,4 +193,4 @@ const hideForm = (name) => {
 }
 
 
-export { pageSetup, createHtmlItem, renderItem, addEventHandlers, renderProjectList };
+export { pageSetup, createHtmlItem, renderItem, addEventHandlers, renderProjectList, renderItemsList };
