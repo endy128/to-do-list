@@ -1,5 +1,7 @@
-import  { createProject, findActiveProject } from './index';
+import  { createProject, createItem, findActiveProject } from './index';
 import { allProjects, activeProject } from './index';
+import { compareAsc, format } from 'date-fns'
+import { it } from 'date-fns/locale';
 
 
 const pageSetup = () => {
@@ -40,6 +42,8 @@ const pageSetup = () => {
     content.appendChild(container);
 
     content.appendChild(renderProjForm());
+    content.appendChild(renderItemForm());
+
 
 };
 
@@ -144,6 +148,54 @@ const renderProjForm = () => {
     return formBackground;
 }
 
+const renderItemForm = () => {
+    const formBackground = divCreate('itemFormBackground');
+
+    const itemForm = divCreate('itemForm');
+    const form = document.createElement('form');
+    form.setAttribute('method', 'post');
+    form.setAttribute('action', '');
+    form.setAttribute('onsubmit', 'return false');
+
+    // create the item name input
+    var itemDesc = document.createElement('input');
+    itemDesc.setAttribute('type', 'text');
+    itemDesc.setAttribute('id', 'itemDesc');
+    itemDesc.setAttribute('placeholder', 'Description');
+
+    // create the item date
+    var itemDate = document.createElement('input');
+    itemDate.setAttribute('type', 'date');
+    itemDate.setAttribute('id', 'itemDate');
+
+    // // create a hidden input for isDone, set to false
+    // var isDone = document.createElement('input');
+    // isDone.setAttribute('type', 'hidden');
+    // isDone.setAttribute('id', 'isDone');
+    // isDone.setAttribute('value', false);
+
+    // create a cancel button
+    var iCancel = document.createElement('button');
+    iCancel.textContent = 'Cancel';
+    iCancel.id = 'itemCancelButton';
+
+    // create a submit button
+    var iSubmit = document.createElement('button');
+    iSubmit.textContent = 'Submit';
+    iSubmit.id = 'itemSubmitButton';
+
+    form.appendChild(itemDesc);
+    form.appendChild(itemDate);
+    form.appendChild(iCancel);
+    form.appendChild(iSubmit);
+
+
+    itemForm.appendChild(form);
+    formBackground.appendChild(itemForm)
+
+    return formBackground;
+}
+
 const addEventHandlers = () => {
 
     // add the event handler for the "add" project and item buttons
@@ -156,6 +208,8 @@ const addEventHandlers = () => {
     const addItem = document.querySelector('#itemAdd');
     addItem.addEventListener('click', () => {
         console.log("PRESSED");
+        showForm('.itemForm');
+        document.querySelector('#itemDesc').focus();
     });
 
 
@@ -180,15 +234,57 @@ const addEventHandlers = () => {
             console.table(allProjects);
 
     });
+
+    const itemCancelButton = document.querySelector('#itemCancelButton');
+    itemCancelButton.addEventListener('click', () => {
+        document.getElementById('itemDesc').value = '';
+        hideForm('.itemForm');
+    });
+
+    const itemSubmitButton = document.querySelector('#itemSubmitButton');
+        itemSubmitButton.addEventListener('click', () => {
+            
+            const desc = document.getElementById('itemDesc').value;
+            const date = document.getElementById('itemDate').value;
+
+            document.getElementById('itemDesc').value = '';
+            document.getElementById('itemDate').value = '';
+          
+            var newItem = createItem(desc, date, false);
+            var activeProject = findActiveProject(allProjects);
+
+            addItemToActiveProject(newItem);
+
+
+            hideForm('.itemForm');
+
+            renderItemsList(findActiveProject(allProjects));
+            console.table(allProjects);
+
+    });
+
+}
+
+const addItemToActiveProject = (item) => {
+    var activeProject = findActiveProject(allProjects);
+    allProjects[activeProject].toDoList.push(item);
 }
 
 const showForm = (name) => {
-    document.querySelector('.formBackground').style.display = 'block';
+    if (name === '.itemForm') {
+        document.querySelector('.itemFormBackground').style.display = 'block';
+    } else {
+        document.querySelector('.formBackground').style.display = 'block';
+    }
     document.querySelector(name).style.display = 'block';
 }
 
 const hideForm = (name) => {
+    if (name === '.itemForm') {
+        document.querySelector('.itemFormBackground').style.display = 'none';
+    } else {
     document.querySelector('.formBackground').style.display = 'none';
+    }
     document.querySelector(name).style.display = 'none';
 }
 

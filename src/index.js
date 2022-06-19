@@ -33,11 +33,11 @@ createProject('Second List');
 console.log(allProjects[0].name);
 
 
-function createItem(desc, date, done) {
+function createItem(desc, date, isDone) {
     return {
         desc,
         date,
-        done,
+        isDone,
         set setDesc (value) {
             this.desc = value;
         } 
@@ -81,7 +81,7 @@ console.log(allProjects[findActiveProject(allProjects)].name);
 
 
 
-export {createProject, allProjects, activeProject, findActiveProject}
+export {createProject, createItem, allProjects, activeProject, findActiveProject}
 
 // item2.setDesc = 'laundry';
 
