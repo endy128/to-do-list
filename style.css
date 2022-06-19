@@ -195,3 +195,7 @@ button:active {
 .itemForm form input {
     grid-column-end: span 2;
 }
+
+.selected {
+    background-color: red;
+}
