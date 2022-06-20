@@ -44,7 +44,7 @@ const pageSetup = () => {
 
     content.appendChild(renderProjForm());
     content.appendChild(renderItemForm());
-    content.appendChild(renderProjEditForm());
+    // content.appendChild(renderProjEditForm());
 
 
 
@@ -93,7 +93,10 @@ const renderProjectList = (array) => {
             projectDiv.appendChild(createHtmlProject(element.name, index));
         }
         });
+
+    // put the event handlers back on the new nodes
     addProjectEventHandlers();
+    addProjectEditEventhandlers();
 }
 
 const createHtmlItem = (item, index) => {
@@ -153,6 +156,12 @@ const renderProjForm = () => {
     projectName.setAttribute('placeholder', 'Project Name');
     projectName.autofocus = true;
 
+    // create hidden value for use when editing
+    var index = document.createElement('input');
+    index.setAttribute('type', 'hidden');
+    index.setAttribute('id', 'projIndex');
+    index.setAttribute('value', false);
+
     // create a cancel button
     var pCancel = document.createElement('button');
     pCancel.textContent = 'Cancel';
@@ -166,6 +175,7 @@ const renderProjForm = () => {
     form.appendChild(projectName);
     form.appendChild(pCancel);
     form.appendChild(pSubmit);
+    form.appendChild(index);
 
 
     projForm.appendChild(form);
@@ -174,42 +184,7 @@ const renderProjForm = () => {
     return formBackground;
 }
 
-const renderProjEditForm = () => {
-    const formBackground = divCreate('projEditBackground');
 
-    const projForm = divCreate('projEdit');
-    const form = document.createElement('form');
-    form.setAttribute('method', 'post');
-    form.setAttribute('action', '');
-    form.setAttribute('onsubmit', 'return false');
-
-    // create the project name input
-    var projectName = document.createElement('input');
-    projectName.setAttribute('type', 'text');
-    projectName.setAttribute('id', 'projectName');
-    projectName.setAttribute('placeholder', 'Project Name');
-    projectName.autofocus = true;
-
-    // create a cancel button
-    var pCancel = document.createElement('button');
-    pCancel.textContent = 'Cancel';
-    pCancel.id = 'projEditCancel';
-
-    // create a submit button
-    var pSubmit = document.createElement('button');
-    pSubmit.textContent = 'Submit';
-    pSubmit.id = 'projEditSubmit';
-
-    form.appendChild(projectName);
-    form.appendChild(pCancel);
-    form.appendChild(pSubmit);
-
-
-    projForm.appendChild(form);
-    formBackground.appendChild(projForm)
-
-    return formBackground;
-}
 
 const renderItemForm = () => {
     const formBackground = divCreate('itemFormBackground');
@@ -284,20 +259,26 @@ const addEventHandlers = () => {
 
     const projSubmitButton = document.querySelector('#projSubmitButton');
         projSubmitButton.addEventListener('click', () => {
-            
-            const newProject = document.getElementById('projectName').value;
-            document.getElementById('projectName').value = '';
-          
-            createProject(newProject);
+
+            const hiddenFormValue = document.querySelector('#projIndex').value;
+            if (hiddenFormValue != 'false') {
+
+                allProjects[hiddenFormValue].name = document.getElementById('projectName').value;
+                document.getElementById('projectName').value = '';
+                // reset the hidden index value
+                document.querySelector('#projIndex').value = false; 
+            } else {
+                const newProject = document.getElementById('projectName').value;
+                document.getElementById('projectName').value = '';
+                createProject(newProject);
+            }
 
             hideForm('.projForm');
-
             renderProjectList(allProjects);
             renderItemsList(findActiveProject(allProjects));
             console.table(allProjects);
-
             saveLocalData(allProjects);
-
+            
 
     });
 
@@ -331,14 +312,25 @@ const addEventHandlers = () => {
 
     
     addProjectEventHandlers();
-
-    const projEditButtons = Array.from(document.querySelectorAll('.project-item .edit'));
-        projEditButtons.forEach(button => button.addEventListener('click', () => {
-            console.log(button.dataset.index);
-            showForm('.projEdit');
-        }))
+    addProjectEditEventhandlers();
     
 };
+
+const addProjectEditEventhandlers = (() => {
+    return () => {
+            // project edit buttons
+    const projEditButtons = Array.from(document.querySelectorAll('.project-item .edit'));
+    projEditButtons.forEach(button => button.addEventListener('click', () => {
+        
+        showForm('.projForm');
+        document.querySelector('#projectName').focus();
+
+        // sets the hidden input on the form to the index value of the project clicked on
+        document.querySelector('.projForm  #projIndex').value =  button.dataset.index;
+    }))
+    }
+
+})();
 
 const addProjectEventHandlers  = (() =>{
     return () => {
