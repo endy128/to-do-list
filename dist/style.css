@@ -117,6 +117,7 @@ padding: 24px;
 
 .done {
     order: -1;
+    transition-duration: 0.2s;
 }
 
 
@@ -146,7 +147,8 @@ button {
 }
 
 button:hover,
-button:hover {
+button:hover,
+.done:hover {
    transform: scale(1.1);
 
 }
