@@ -44,6 +44,8 @@ const pageSetup = () => {
 
     content.appendChild(renderProjForm());
     content.appendChild(renderItemForm());
+    content.appendChild(renderProjEditForm());
+
 
 
 };
@@ -67,7 +69,12 @@ const addHtmlToNode = (node, tag, text, id) => {
 
 const createHtmlProject = (project, index, isActive) => {
     const div = document.createElement('div');
+    const button = document.createElement('button');
+    button.classList.add('edit');
+    button.dataset.index = index;
+    button.textContent = 'Edit';
     div.textContent = project;
+    div.appendChild(button);
     div.classList.add('project-item');
     div.dataset.index = index;
     if (isActive === true) div.classList.add('selected');
@@ -96,11 +103,17 @@ const createHtmlItem = (item, index) => {
     const myDesc = divCreate('desc');
     const myDate = divCreate('date');
     const myDone = divCreate('done');
+    const button = document.createElement('button');
 
     myItem.dataset.index = index;
 
+    button.classList.add('edit');
+    button.dataset.index = index;
+    button.textContent = 'Edit';
+
     myDesc.textContent = item.desc;
-    // myDate.textContent = item.date;
+    myDesc.appendChild(button);
+
     myDate.textContent = format(new Date(item.date), 'dd/MM/yyyy')
     myDone.textContent = item.isDone;
 
@@ -125,7 +138,7 @@ const renderItemsList = (activeProject) => {
 }
 
 const renderProjForm = () => {
-    const formBackground = divCreate('formBackground');
+    const formBackground = divCreate('projFormBackground');
 
     const projForm = divCreate('projForm');
     const form = document.createElement('form');
@@ -149,6 +162,43 @@ const renderProjForm = () => {
     var pSubmit = document.createElement('button');
     pSubmit.textContent = 'Submit';
     pSubmit.id = 'projSubmitButton';
+
+    form.appendChild(projectName);
+    form.appendChild(pCancel);
+    form.appendChild(pSubmit);
+
+
+    projForm.appendChild(form);
+    formBackground.appendChild(projForm)
+
+    return formBackground;
+}
+
+const renderProjEditForm = () => {
+    const formBackground = divCreate('projEditBackground');
+
+    const projForm = divCreate('projEdit');
+    const form = document.createElement('form');
+    form.setAttribute('method', 'post');
+    form.setAttribute('action', '');
+    form.setAttribute('onsubmit', 'return false');
+
+    // create the project name input
+    var projectName = document.createElement('input');
+    projectName.setAttribute('type', 'text');
+    projectName.setAttribute('id', 'projectName');
+    projectName.setAttribute('placeholder', 'Project Name');
+    projectName.autofocus = true;
+
+    // create a cancel button
+    var pCancel = document.createElement('button');
+    pCancel.textContent = 'Cancel';
+    pCancel.id = 'projEditCancel';
+
+    // create a submit button
+    var pSubmit = document.createElement('button');
+    pSubmit.textContent = 'Submit';
+    pSubmit.id = 'projEditSubmit';
 
     form.appendChild(projectName);
     form.appendChild(pCancel);
@@ -279,8 +329,14 @@ const addEventHandlers = () => {
 
     });
 
-    // here
+    
     addProjectEventHandlers();
+
+    const projEditButtons = Array.from(document.querySelectorAll('.project-item .edit'));
+        projEditButtons.forEach(button => button.addEventListener('click', () => {
+            console.log(button.dataset.index);
+            showForm('.projEdit');
+        }))
     
 };
 
@@ -306,21 +362,14 @@ const addItemToActiveProject = (item) => {
     allProjects[activeProject].toDoList.push(item);
 }
 
+// show & hide the ".projForm" and ".indexForm" backgrounds & form
 const showForm = (name) => {
-    if (name === '.itemForm') {
-        document.querySelector('.itemFormBackground').style.display = 'block';
-    } else {
-        document.querySelector('.formBackground').style.display = 'block';
-    }
+    document.querySelector( name + 'Background').style.display = 'block';
     document.querySelector(name).style.display = 'block';
 }
 
 const hideForm = (name) => {
-    if (name === '.itemForm') {
-        document.querySelector('.itemFormBackground').style.display = 'none';
-    } else {
-    document.querySelector('.formBackground').style.display = 'none';
-    }
+    document.querySelector( name + 'Background').style.display = 'none'; 
     document.querySelector(name).style.display = 'none';
 }
 
