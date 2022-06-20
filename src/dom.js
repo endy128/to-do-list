@@ -139,7 +139,7 @@ const createHtmlItem = (item, index) => {
     myDesc.appendChild(editButton);
     myDesc.appendChild(delButton);
 
-    myDate.textContent = format(new Date(item.date), 'dd/MM/yyyy')
+    myDate.textContent = format(new Date(item.date), 'dd/MM/yyyy');
     myDone.textContent = item.isDone;
 
     myItem.appendChild(myDesc);
@@ -159,7 +159,8 @@ const renderItemsList = (activeProject) => {
     const itemsDiv = document.querySelector('.items');
     itemsDiv.innerHTML = '';
     allProjects[activeProject].toDoList.forEach((arrayItem, index) => renderItem(createHtmlItem(arrayItem, index)));
-    addItemDeleteHandlers();
+    addItemDeleteEventHandlers();
+    addItemEditEventHandlers();
 }
 
 const renderProjForm = () => {
@@ -228,11 +229,11 @@ const renderItemForm = () => {
     itemDate.setAttribute('id', 'itemDate');
     itemDate.setAttribute('value', format(new Date(), 'yyyy-MM-dd'));
 
-    // // create a hidden input for isDone, set to false
-    // var isDone = document.createElement('input');
-    // isDone.setAttribute('type', 'hidden');
-    // isDone.setAttribute('id', 'isDone');
-    // isDone.setAttribute('value', false);
+    // create hidden value for use when editing
+    var index = document.createElement('input');
+    index.setAttribute('type', 'hidden');
+    index.setAttribute('id', 'itemIndex');
+    index.setAttribute('value', false);
 
     // create a cancel button
     var iCancel = document.createElement('button');
@@ -248,6 +249,7 @@ const renderItemForm = () => {
     form.appendChild(itemDate);
     form.appendChild(iCancel);
     form.appendChild(iSubmit);
+    form.appendChild(index);
 
 
     itemForm.appendChild(form);
@@ -310,22 +312,26 @@ const addEventHandlers = () => {
 
     const itemSubmitButton = document.querySelector('#itemSubmitButton');
         itemSubmitButton.addEventListener('click', () => {
-            
             const desc = document.getElementById('itemDesc').value;
             const date = document.getElementById('itemDate').value;
+            const hiddenFormValue = document.querySelector('#itemIndex').value;
 
-            document.getElementById('itemDesc').value = '';
-            // document.getElementById('itemDate').value = format(new Date(), 'yyyy-MM-dd');
-          
-            var newItem = createItem(desc, date, false);
-
-            addItemToActiveProject(newItem);
+            if (hiddenFormValue != 'false') {
+                const activeProject = findActiveProject(allProjects);
+                allProjects[activeProject].toDoList[hiddenFormValue].desc = desc;
+                allProjects[activeProject].toDoList[hiddenFormValue].date = date;
+                document.getElementById('itemDesc').value = '';
+                document.getElementById('itemDate').value = format(new Date(), 'yyyy-MM-dd');
+                document.querySelector('#itemIndex').value = false; 
+            } else {  
+                var newItem = createItem(desc, date, false);
+                addItemToActiveProject(newItem);
+                document.getElementById('itemDesc').value = '';
+            };
+            
 
             hideForm('.itemForm');
-
             renderItemsList(findActiveProject(allProjects));
-            console.table(allProjects);
-
             saveLocalData(allProjects);
 
     });
@@ -333,10 +339,9 @@ const addEventHandlers = () => {
     
     addProjectEventHandlers();
     addProjectEditEventHandlers();
-    // addProjectDeleteEventHandlers();    
 };
 
-const addItemDeleteHandlers = (() => {
+const addItemDeleteEventHandlers = (() => {
     return () => {
         const itemDeleteButtons = Array.from(document.querySelectorAll('.desc .delete'));
         itemDeleteButtons.forEach(button => button.addEventListener('click', () => {
@@ -358,7 +363,7 @@ const addProjectDeleteEventHandlers = (() => {
         // remove the project
          allProjects.splice(button.dataset.index, 1);
          
-         removeSelectedProjects();
+         removeSelectedClassFromProjects();
 
          // check if it's NOT the last project before setting the first project to be active
          if (allProjects.length > 1) {
@@ -373,17 +378,44 @@ const addProjectDeleteEventHandlers = (() => {
 
 })();
 
+const addItemEditEventHandlers = (() => {
+    return () => {
+            // item edit buttons
+    const itemEditButtons = Array.from(document.querySelectorAll('.desc .edit'));
+    itemEditButtons.forEach(button => button.addEventListener('click', () => {
+        const activeProject = findActiveProject(allProjects);
+        const index = button.dataset.index;
+        // have the form input boxes populated with correct data for easy editing
+        document.querySelector('#itemDesc').value = allProjects[activeProject].toDoList[index].desc;
+        document.querySelector('#itemDate').value = allProjects[activeProject].toDoList[index].date;
+
+        showForm('.itemForm');
+        document.querySelector('#itemDesc').focus();
+
+        // sets the hidden input on the form to the index value of the project clicked on
+        document.querySelector('.itemForm  #itemIndex').value =  index;
+    }))
+    }
+
+})();
+
 const addProjectEditEventHandlers = (() => {
     return () => {
             // project edit buttons
     const projEditButtons = Array.from(document.querySelectorAll('.project-item .edit'));
     projEditButtons.forEach(button => button.addEventListener('click', () => {
+
+        const activeProject = findActiveProject(allProjects);
+        const index = button.dataset.index;
+        // have the form input boxes populated with correct data for easy editing
+        document.querySelector('#projectName').value = allProjects[activeProject].name;
+
         
         showForm('.projForm');
         document.querySelector('#projectName').focus();
 
         // sets the hidden input on the form to the index value of the project clicked on
-        document.querySelector('.projForm  #projIndex').value =  button.dataset.index;
+        document.querySelector('.projForm  #projIndex').value =  index;
     }))
     }
 
@@ -393,7 +425,7 @@ const addProjectEventHandlers  = (() =>{
     return () => {
         const projects = Array.from(document.querySelectorAll('.project-item p'));
             projects.forEach(project => project.addEventListener('click', () => {
-                removeSelectedProjects();
+                removeSelectedClassFromProjects();
                 project.classList.add('selected');
                 setActiveProject(project.dataset.index);
                 renderItemsList(project.dataset.index);
@@ -403,7 +435,7 @@ const addProjectEventHandlers  = (() =>{
 })();
 
 // removes class "selected" form all project items
-const removeSelectedProjects = () => {
+const removeSelectedClassFromProjects = () => {
     const projects = Array.from(document.querySelectorAll('.project-item p'));
     projects.forEach(project => project.classList.remove('selected') );
 };

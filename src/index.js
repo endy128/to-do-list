@@ -37,16 +37,16 @@ const createDefaultToDoList = () => {
     setActiveProject(0);
 
     allProjects[0].toDoList = [
-        {"desc":"Empty bins","date":"01/01/2021","isDone":false},
-        {"desc":"Do Laundry","date":"02/02/2022","isDone":true},
-        {"desc":"Place Shopping Order","date":"02/02/2023","isDone":false},
+        {"desc":"Empty bins","date":"2021-01-01","isDone":false},
+        {"desc":"Do Laundry","date":"2022-02-02","isDone":true},
+        {"desc":"Place Shopping Order","date":"2023-03-03","isDone":false},
         {"desc":"Clean Car","date":"2022-06-19","isDone":false}
         ];
     allProjects[1].toDoList = [
         {"desc":"Clean Car","date":"2022-06-19","isDone":false},
-        {"desc":"Do Laundry","date":"02/02/2022","isDone":true},
-        {"desc":"Empty bins","date":"01/01/2021","isDone":false},
-        {"desc":"Place Shopping Order","date":"02/02/2023","isDone":false}
+        {"desc":"Do Laundry","date":"2022-02-02","isDone":true},
+        {"desc":"Empty bins","date":"2021-01-01","isDone":false},
+        {"desc":"Place Shopping Order","date":"2023-04-04","isDone":false}
         ];
     
 }
