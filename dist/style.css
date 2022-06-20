@@ -142,8 +142,10 @@ padding: 24px;
 button {
     cursor: pointer;
     background-color: unset;
+}
 
-
+.project-item p {
+    cursor: pointer;
 }
 
 button:hover,
