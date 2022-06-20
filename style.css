@@ -86,7 +86,7 @@ h2 {
 
 .item {
     display: grid;
-    grid-template-columns: minmax(300px, 1fr) 150px 150px;
+    grid-template-columns: minmax(300px, 1fr) 150px 50px;
 }
 
 #projectAdd,
@@ -220,4 +220,44 @@ button:active {
 
 .selected {
     background-color: var(--light-color);
+}
+
+.checkbox {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--light-color);
+    cursor: pointer;
+}
+
+.checked {
+    background-color: #b3ffac;
+    background-image: url('./img/check.svg');
+    background-position: 50% 50%;
+    background-size: 25px;
+    background-repeat: no-repeat;
+}
+
+button.delete {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: rgba(255, 0, 0, 0.534);
+    background-image: url('./img/close.svg');
+    background-position: 50% 50%;
+    background-size: 20px;
+    background-repeat: no-repeat;
+}
+
+button.edit {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: rgba(151, 150, 150, 0.555);
+    background-image: url('./img/pencil.svg');
+    background-position: 50% 50%;
+    background-size: 15px;
+    background-repeat: no-repeat;
 }
