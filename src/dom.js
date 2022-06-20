@@ -351,10 +351,10 @@ const addToggleCheckboxEventHandlers = (() => {
     return () => {
         const checkboxes = Array.from(document.querySelectorAll('.checkbox'));
         checkboxes.forEach(checkbox => checkbox.addEventListener('click', (e) => {
-            console.log(checkbox.parentNode.dataset.index);
             const index = checkbox.parentNode.dataset.index;
             toggleCheckbox(index, e);
             // redraw the item list or amend the clicked div
+            saveLocalData(allProjects);
         }))
     };
 })();
@@ -368,10 +368,8 @@ const toggleCheckbox = (index, e) => {
     } else {
         allProjects[activeProject].toDoList[index].isDone = false;
     }
-    console.log(allProjects[activeProject].toDoList[index].isDone);
     // toggle the class
     e.target.classList.toggle('checked');
-    console.table(allProjects[activeProject])
 }
 
 const addItemDeleteEventHandlers = (() => {
