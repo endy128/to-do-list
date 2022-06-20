@@ -75,11 +75,11 @@ const createHtmlProject = (project, index, isActive) => {
 
     editButton.classList.add('edit');
     editButton.dataset.index = index;
-    editButton.textContent = 'Edit';
+    // editButton.textContent = 'Edit';
 
     delButton.classList.add('delete');
     delButton.dataset.index = index;
-    delButton.textContent = 'Del';
+    // delButton.textContent = 'Del';
 
     p.textContent = project;
     p.dataset.index = index;
@@ -129,18 +129,22 @@ const createHtmlItem = (item, index) => {
 
     editButton.classList.add('edit');
     editButton.dataset.index = index;
-    editButton.textContent = 'Edit';
+    // editButton.textContent = 'Edit';
 
     delButton.classList.add('delete');
     delButton.dataset.index = index;
-    delButton.textContent = 'Del';
+    // delButton.textContent = 'Del';
 
     myDesc.textContent = item.desc;
     myDesc.appendChild(editButton);
     myDesc.appendChild(delButton);
 
     myDate.textContent = format(new Date(item.date), 'dd/MM/yyyy');
-    myDone.textContent = item.isDone;
+    // myDone.textContent = item.isDone;
+    myDone.classList.add('checkbox');
+    if (item.isDone === true) {
+        myDone.classList.add('checked');
+    }
 
     myItem.appendChild(myDesc);
     myItem.appendChild(myDate);
@@ -161,6 +165,8 @@ const renderItemsList = (activeProject) => {
     allProjects[activeProject].toDoList.forEach((arrayItem, index) => renderItem(createHtmlItem(arrayItem, index)));
     addItemDeleteEventHandlers();
     addItemEditEventHandlers();
+    addToggleCheckboxEventHandlers();
+
 }
 
 const renderProjForm = () => {
@@ -341,6 +347,33 @@ const addEventHandlers = () => {
     addProjectEditEventHandlers();
 };
 
+const addToggleCheckboxEventHandlers = (() => {
+    return () => {
+        const checkboxes = Array.from(document.querySelectorAll('.checkbox'));
+        checkboxes.forEach(checkbox => checkbox.addEventListener('click', (e) => {
+            console.log(checkbox.parentNode.dataset.index);
+            const index = checkbox.parentNode.dataset.index;
+            toggleCheckbox(index, e);
+            // redraw the item list or amend the clicked div
+        }))
+    };
+})();
+
+const toggleCheckbox = (index, e) => {
+    const activeProject = findActiveProject(allProjects);
+    // toggel boolean of index
+    if (allProjects[activeProject].toDoList[index].isDone === false) {
+        allProjects[activeProject].toDoList[index].isDone = true;
+
+    } else {
+        allProjects[activeProject].toDoList[index].isDone = false;
+    }
+    console.log(allProjects[activeProject].toDoList[index].isDone);
+    // toggle the class
+    e.target.classList.toggle('checked');
+    console.table(allProjects[activeProject])
+}
+
 const addItemDeleteEventHandlers = (() => {
     return () => {
         const itemDeleteButtons = Array.from(document.querySelectorAll('.desc .delete'));
@@ -404,13 +437,11 @@ const addProjectEditEventHandlers = (() => {
             // project edit buttons
     const projEditButtons = Array.from(document.querySelectorAll('.project-item .edit'));
     projEditButtons.forEach(button => button.addEventListener('click', () => {
-
         const activeProject = findActiveProject(allProjects);
         const index = button.dataset.index;
         // have the form input boxes populated with correct data for easy editing
         document.querySelector('#projectName').value = allProjects[activeProject].name;
 
-        
         showForm('.projForm');
         document.querySelector('#projectName').focus();
 

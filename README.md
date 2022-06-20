@@ -8,4 +8,5 @@
 https://endy128.github.io/to-do-list/
 
 To Do
-- add delete / edit buttons for projects and items
+- Clickable toggle switch the "isDone" value
+- CSS style
