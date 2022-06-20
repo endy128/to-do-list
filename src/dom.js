@@ -159,6 +159,7 @@ const renderItemsList = (activeProject) => {
     const itemsDiv = document.querySelector('.items');
     itemsDiv.innerHTML = '';
     allProjects[activeProject].toDoList.forEach((arrayItem, index) => renderItem(createHtmlItem(arrayItem, index)));
+    addItemDeleteHandlers();
 }
 
 const renderProjForm = () => {
@@ -332,9 +333,22 @@ const addEventHandlers = () => {
     
     addProjectEventHandlers();
     addProjectEditEventHandlers();
-    addProjectDeleteEventHandlers();
-    
+    // addProjectDeleteEventHandlers();    
 };
+
+const addItemDeleteHandlers = (() => {
+    return () => {
+        const itemDeleteButtons = Array.from(document.querySelectorAll('.desc .delete'));
+        itemDeleteButtons.forEach(button => button.addEventListener('click', () => {
+            console.log("Item Del Index: " + button.dataset.index);
+            console.log("Active Project: " + findActiveProject(allProjects));
+            let activeProject = findActiveProject(allProjects);
+            allProjects[activeProject].toDoList.splice(button.dataset.index, 1);
+            console.table(allProjects[activeProject]);
+            renderItemsList(activeProject);
+        }))
+    };
+})();
 
 const addProjectDeleteEventHandlers = (() => {
     return () => {
@@ -347,8 +361,10 @@ const addProjectDeleteEventHandlers = (() => {
          removeSelectedProjects();
 
          // check if it's NOT the last project before setting the first project to be active
-         if (allProjects.length > 1) setActiveProject(0);
-         
+         if (allProjects.length > 1) {
+            setActiveProject(0);
+            renderItemsList(0);
+         }
          renderProjectList(allProjects);
          saveLocalData(allProjects);
          

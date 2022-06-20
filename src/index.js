@@ -42,6 +42,12 @@ const createDefaultToDoList = () => {
         {"desc":"Place Shopping Order","date":"02/02/2023","isDone":false},
         {"desc":"Clean Car","date":"2022-06-19","isDone":false}
         ];
+    allProjects[1].toDoList = [
+        {"desc":"Clean Car","date":"2022-06-19","isDone":false},
+        {"desc":"Do Laundry","date":"02/02/2022","isDone":true},
+        {"desc":"Empty bins","date":"01/01/2021","isDone":false},
+        {"desc":"Place Shopping Order","date":"02/02/2023","isDone":false}
+        ];
     
 }
 
