@@ -15,40 +15,40 @@ const pageSetup = () => {
     const container = divCreate('container');
 
     let sidebar = divCreate('sidebar');
+    let sideHeader = divCreate('sideHeader');
     let main = divCreate('main');
+    let mainHeader = divCreate('mainHeader');
     let projects = divCreate('projects');
     let items = divCreate('items');
-
-    sidebar = addHtmlToNode(sidebar, 'h2', 'Projects');
-
     let span = document.createElement('span');
-    span.textContent = '+';
     let button = document.createElement('button');
+    
+    sideHeader = addHtmlToNode(sideHeader, 'h2', 'Projects');   
+    mainHeader = addHtmlToNode(mainHeader, 'h2', 'Items');
+    
+    span.textContent = '+';
     button.id = 'projectAdd';
     button.appendChild(span);
-    sidebar.appendChild(button);
-
+    let button2 = button.cloneNode(true);
+    sideHeader.appendChild(button);
+    sidebar.appendChild(sideHeader);
     sidebar.appendChild(projects);
+
     container.appendChild(sidebar);
 
-    main = addHtmlToNode(main, 'h2', 'Items');
-    let button2 = button.cloneNode(true);
     button2.id = 'itemAdd';
-    main.appendChild(button2);
-
+    mainHeader.appendChild(button2);
+    main.appendChild(mainHeader);
     main.appendChild(items);
 
     container.appendChild(main);
-
     content.appendChild(container);
-
+    
     content.appendChild(renderProjForm());
     content.appendChild(renderItemForm());
-    // content.appendChild(renderProjEditForm());
-
-
-
 };
+
+
 
 // creates a div and add the name of the div as a class
 const divCreate = (name) => {
@@ -69,15 +69,28 @@ const addHtmlToNode = (node, tag, text, id) => {
 
 const createHtmlProject = (project, index, isActive) => {
     const div = document.createElement('div');
-    const button = document.createElement('button');
-    button.classList.add('edit');
-    button.dataset.index = index;
-    button.textContent = 'Edit';
-    div.textContent = project;
-    div.appendChild(button);
+    const editButton = document.createElement('button');
+    const delButton = document.createElement('button');
+    const p = document.createElement('p');
+
+    editButton.classList.add('edit');
+    editButton.dataset.index = index;
+    editButton.textContent = 'Edit';
+
+    delButton.classList.add('delete');
+    delButton.dataset.index = index;
+    delButton.textContent = 'Del';
+
+    p.textContent = project;
+    p.dataset.index = index;
+    if (isActive === true) p.classList.add('selected');
+    div.appendChild(p);
+
+    div.appendChild(editButton);
+    div.appendChild(delButton);
+
     div.classList.add('project-item');
     div.dataset.index = index;
-    if (isActive === true) div.classList.add('selected');
     return div;
 }
 
@@ -96,7 +109,10 @@ const renderProjectList = (array) => {
 
     // put the event handlers back on the new nodes
     addProjectEventHandlers();
-    addProjectEditEventhandlers();
+    addProjectEditEventHandlers();
+    addProjectDeleteEventHandlers();
+
+
 }
 
 const createHtmlItem = (item, index) => {
@@ -106,20 +122,25 @@ const createHtmlItem = (item, index) => {
     const myDesc = divCreate('desc');
     const myDate = divCreate('date');
     const myDone = divCreate('done');
-    const button = document.createElement('button');
+    const editButton = document.createElement('button');
+    const delButton = document.createElement('button');
 
     myItem.dataset.index = index;
 
-    button.classList.add('edit');
-    button.dataset.index = index;
-    button.textContent = 'Edit';
+    editButton.classList.add('edit');
+    editButton.dataset.index = index;
+    editButton.textContent = 'Edit';
+
+    delButton.classList.add('delete');
+    delButton.dataset.index = index;
+    delButton.textContent = 'Del';
 
     myDesc.textContent = item.desc;
-    myDesc.appendChild(button);
+    myDesc.appendChild(editButton);
+    myDesc.appendChild(delButton);
 
     myDate.textContent = format(new Date(item.date), 'dd/MM/yyyy')
     myDone.textContent = item.isDone;
-
 
     myItem.appendChild(myDesc);
     myItem.appendChild(myDate);
@@ -154,7 +175,6 @@ const renderProjForm = () => {
     projectName.setAttribute('type', 'text');
     projectName.setAttribute('id', 'projectName');
     projectName.setAttribute('placeholder', 'Project Name');
-    projectName.autofocus = true;
 
     // create hidden value for use when editing
     var index = document.createElement('input');
@@ -262,7 +282,6 @@ const addEventHandlers = () => {
 
             const hiddenFormValue = document.querySelector('#projIndex').value;
             if (hiddenFormValue != 'false') {
-
                 allProjects[hiddenFormValue].name = document.getElementById('projectName').value;
                 document.getElementById('projectName').value = '';
                 // reset the hidden index value
@@ -312,11 +331,33 @@ const addEventHandlers = () => {
 
     
     addProjectEventHandlers();
-    addProjectEditEventhandlers();
+    addProjectEditEventHandlers();
+    addProjectDeleteEventHandlers();
     
 };
 
-const addProjectEditEventhandlers = (() => {
+const addProjectDeleteEventHandlers = (() => {
+    return () => {
+            // project edit buttons
+    const projDeleteButtons = Array.from(document.querySelectorAll('.project-item .delete'));
+    projDeleteButtons.forEach(button => button.addEventListener('click', () => {        
+        // remove the project
+         allProjects.splice(button.dataset.index, 1);
+         
+         removeSelectedProjects();
+
+         // check if it's NOT the last project before setting the first project to be active
+         if (allProjects.length > 1) setActiveProject(0);
+         
+         renderProjectList(allProjects);
+         saveLocalData(allProjects);
+         
+    }))
+    }
+
+})();
+
+const addProjectEditEventHandlers = (() => {
     return () => {
             // project edit buttons
     const projEditButtons = Array.from(document.querySelectorAll('.project-item .edit'));
@@ -334,9 +375,9 @@ const addProjectEditEventhandlers = (() => {
 
 const addProjectEventHandlers  = (() =>{
     return () => {
-        const projects = Array.from(document.querySelectorAll('.project-item'));
+        const projects = Array.from(document.querySelectorAll('.project-item p'));
             projects.forEach(project => project.addEventListener('click', () => {
-                removeSelectedProjects(projects);
+                removeSelectedProjects();
                 project.classList.add('selected');
                 setActiveProject(project.dataset.index);
                 renderItemsList(project.dataset.index);
@@ -345,7 +386,9 @@ const addProjectEventHandlers  = (() =>{
     }
 })();
 
-const removeSelectedProjects = (projects) => {
+// removes class "selected" form all project items
+const removeSelectedProjects = () => {
+    const projects = Array.from(document.querySelectorAll('.project-item p'));
     projects.forEach(project => project.classList.remove('selected') );
 };
 

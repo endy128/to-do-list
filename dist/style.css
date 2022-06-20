@@ -62,6 +62,13 @@ h2 {
 
 }
 
+.sideHeader,
+.mainHeader {
+    display: grid;
+    grid-template-columns: 1fr 50px;
+    /* justify-content: space-between; */
+}
+
 .projects {
     display: grid;
 }
@@ -69,8 +76,8 @@ h2 {
 .project-item,
 .desc {
     display: grid;
-    grid-template-columns: 1fr 36px;
-    justify-content: space-between;
+    grid-template-columns: 1fr 36px 36px;
+    /* justify-content: space-between; */
 }
 
 .items {
@@ -89,9 +96,9 @@ h2 {
     border: 1px solid black;
     border-radius: 50px;
     transition-duration: 0.2s;
-    float: right;
-    position: relative;
-    top: -50px;
+    /* float: right; */
+    /* position: relative;
+    top: -50px; */
     /* justify-self: end;
     justify-self: right; */
     font-size: 48px;
@@ -102,6 +109,10 @@ h2 {
 #itemAdd span {
     position: relative;
     bottom: 1px;
+}
+
+button {
+    cursor: pointer;
 }
 
 button:hover {
