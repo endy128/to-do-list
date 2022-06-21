@@ -6,7 +6,3 @@
 - Developed with Webpack using modules
 
 https://endy128.github.io/to-do-list/
-
-To Do
-- Clickable toggle switch the "isDone" value
-- CSS style
