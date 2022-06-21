@@ -105,7 +105,7 @@ padding: 24px;
     display: grid;
     border: 1px solid var(--light-color);
     border-radius: 24px;
-    padding: 2px 0 2px 12px;
+    padding: 6px 0 6px 12px;
     margin: 6px;
 }
 
@@ -300,7 +300,6 @@ button.edit {
     border-radius: 50%;
     border: 1px solid var(--light-color);
     background-position: 50% 50%;
-    background-size: 20px;
     background-repeat: no-repeat;
     margin-right: 6px;
 }
@@ -308,10 +307,14 @@ button.edit {
 button.edit {
     background-color: rgba(151, 150, 150, 0.555);
     background-image: url('./img/pencil.svg');
+    background-size: 17px;
+
 
 }
 
 button.delete {
-    background-color: rgba(255, 0, 0, 0.534);
+    background-color: rgba(255, 64, 64, 0.507);
     background-image: url('./img/close.svg');
+    background-size: 20px;
+
 }
